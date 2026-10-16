@@ -1,0 +1,27 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Get source
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PyInstaller
+        run: python -m pip install --upgrade pyinstaller
+      - name: Build EXE
+        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name "ProstyeStikery" stickers.py
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProstyeStikery-Windows
+          path: dist/ProstyeStikery.exe
+          if-no-files-found: error
